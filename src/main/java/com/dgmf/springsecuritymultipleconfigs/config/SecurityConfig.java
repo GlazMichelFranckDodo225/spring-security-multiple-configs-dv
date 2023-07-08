@@ -46,4 +46,18 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions().disable())
                 .build();
     }
+
+    // "/" and "/error" ==> Permit all | Anything else ("/private" for example) ==> Login with a formLogin
+    @Bean
+    @Order(3)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/").permitAll();
+                    auth.requestMatchers("/error").permitAll();
+                    auth.anyRequest().authenticated();
+                })
+                .formLogin(withDefaults())
+                .build();
+    }
 }
